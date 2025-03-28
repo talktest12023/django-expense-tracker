@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2xci#g5e52r3w%gw_91@jizzrg8dp7&x1=j*vl^dvf$t8*on9z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.13.116']
+ALLOWED_HOSTS = ['192.168.13.116', 'localhost']
 
 LOGIN_URL = '/admin/login/'
 
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'selavu',
+    'rangefilter',
+
 ]
 
 MIDDLEWARE = [

@@ -49,6 +49,7 @@ def delete_expense(request, pk):
     return redirect('expense_list')
 
 
+@login_required
 def expense_list(request):
     expenses = Expense.objects.filter(
         add_by=request.user)  # Show only user's expenses
