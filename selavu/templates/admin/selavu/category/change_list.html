@@ -1,0 +1,31 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+    <div style="margin-bottom: 20px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd;">
+        <h3>Total Spending: ₹{{ total_spending }}</h3>
+    </div>
+
+   
+    <div style="width: 400px; height: 400px; margin: auto;">
+        <canvas id="spendingChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('spendingChart').getContext('2d');
+        var spendingChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: {{ category_labels|safe }},  
+                datasets: [{
+                    data: {{ category_values|safe }},  
+                    backgroundColor: [
+                        'red', 'blue', 'green', 'yellow', 'purple', 'orange'
+                    ]
+                }]
+            }
+        });
+    </script>
+ {{ block.super }}
+
+{% endblock %}
