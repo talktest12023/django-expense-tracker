@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-username = "rahuladmin"
+username = "rahuladmin2"
 email = "talktest12023@gmail.com"
 password = "tarento123"
 
