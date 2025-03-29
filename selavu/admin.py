@@ -17,7 +17,7 @@ class CategoryAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
-            return qs.filter(user=request.user)
+            return qs.filter(add_by=request.user)
         return qs
 
     def save_model(self, request, obj, form, change):
