@@ -4,7 +4,16 @@ from .forms import ExpenseForm
 from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 # Create your views here.
+
+
+def create_admin(request):
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser(
+            "admin", "admin@example.com", "Admin@1234")
+        return HttpResponse("Superuser created successfully!")
+    return HttpResponse("Superuser already exists!")
 
 
 def expenses(request):

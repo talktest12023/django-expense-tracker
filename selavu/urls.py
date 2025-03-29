@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import create_admin
 
 urlpatterns = [
     path('expenses/',  views.expense_list, name='expense_list'),
@@ -8,4 +9,5 @@ urlpatterns = [
          name='edit_expense'),  # ✅ Ensure this line exists
     path('delete-expense/<int:pk>/', views.delete_expense,
          name='delete_expense'),  # ✅ Add this line
+    path('create-admin/', create_admin),
 ]
