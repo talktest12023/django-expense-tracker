@@ -33,7 +33,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ExpenseAdmin(admin.ModelAdmin):
-    list_display = ('amount', 'category', 'add_by', 'date')
+    list_display = ('amount', 'category', 'add_by', 'description', 'date')
     list_filter = (('date', DateRangeFilter),)  # ✅ Date range filter
 
     def get_queryset(self, request):
