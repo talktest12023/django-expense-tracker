@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import create_admin
+from .views import create_admin, backup_db_view
 
 urlpatterns = [
     path('expenses/',  views.expense_list, name='expense_list'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('delete-expense/<int:pk>/', views.delete_expense,
          name='delete_expense'),  # ✅ Add this line
     path('create-admin/', create_admin),
+    path('backup-db/', backup_db_view, name='backup-db'),
 ]

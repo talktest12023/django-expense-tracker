@@ -5,7 +5,30 @@ from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+import os
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
+
+
+@csrf_exempt
+def backup_db_view(request):
+    db_path = settings.DATABASES['default']['NAME']
+    backup_path = os.path.join(settings.BASE_DIR, "db_backup.sqlite3")
+
+    try:
+        with open(db_path, 'rb') as db_file:
+            with open(backup_path, 'wb') as backup_file:
+                backup_file.write(db_file.read())
+
+        with open(backup_path, 'rb') as backup_file:
+            response = HttpResponse(
+                backup_file.read(), content_type='application/x-sqlite3')
+            response['Content-Disposition'] = 'attachment; filename="db_backup.sqlite3"'
+            return response
+
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
 
 
 def create_admin(request):
