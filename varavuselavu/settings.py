@@ -128,8 +128,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_URL = '/static/'
-# ✅ This is where collectstatic will copy files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
