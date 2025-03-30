@@ -83,11 +83,11 @@ WSGI_APPLICATION = 'varavuselavu.wsgi.application'
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Check if running on Render (Render sets "RENDER" env variable)
+# Check if running on Render
 if "RENDER" in os.environ:
-    DB_PATH = "/var/db.sqlite3"  # Persistent path on Render
+    DB_PATH = "/var/db.sqlite3"  # Persistent storage on Render
 else:
-    DB_PATH = os.path.join(BASE_DIR, "db.sqlite3")  # Default local path
+    DB_PATH = os.path.join(BASE_DIR, "db.sqlite3")  # Local development
 
 DATABASES = {
     "default": {
