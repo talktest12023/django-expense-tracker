@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mkdir -p /opt/render/.config/rclone
 echo -e "$RCLONE_CONFIG" > /opt/render/.config/rclone/rclone.conf
 
 echo "⏳ Restoring SQLite database from Google Drive..."
