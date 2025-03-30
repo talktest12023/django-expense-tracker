@@ -81,10 +81,18 @@ WSGI_APPLICATION = 'varavuselavu.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Check if running on Render (Render sets "RENDER" env variable)
+if "RENDER" in os.environ:
+    DB_PATH = "/var/db.sqlite3"  # Persistent path on Render
+else:
+    DB_PATH = os.path.join(BASE_DIR, "db.sqlite3")  # Default local path
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": DB_PATH,
     }
 }
 
