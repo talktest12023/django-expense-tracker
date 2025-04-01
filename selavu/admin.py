@@ -2,13 +2,11 @@ from .models import Category, Expense
 from django.contrib import admin
 from django.db.models import Sum
 from django.utils.timezone import now, timedelta
-from rangefilter.filters import DateRangeFilter
-from django.shortcuts import redirect
 import json  # ✅ Import json for sending chart data
+
 
 admin.site.site_header = "Expense Tracker"  # ✅ Change the header
 admin.site.site_title = "Expense Dashboard"  # ✅ Change the index title
-# Import models
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -34,13 +32,21 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class ExpenseAdmin(admin.ModelAdmin):
     list_display = ('amount', 'category', 'add_by', 'description', 'date')
-    list_filter = (('date', DateRangeFilter),)  # ✅ Date range filter
+    # ✅ Uses a calendar picker
+    # list_filter = (("date", DateRangePickerFilter),)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
-            return qs.filter(add_by=request.user)
-        return qs
+            qs = qs.filter(add_by=request.user)
+
+        # ✅ Apply default filtering for the 27th of the previous month to the 26th of this month
+        today = now().date()
+        first_date = today.replace(day=27) if today.day >= 27 else (
+            today.replace(day=1) - timedelta(days=1)).replace(day=27)
+        last_date = (first_date + timedelta(days=31)).replace(day=26)
+
+        return qs.filter(date__gte=first_date, date__lte=last_date)
 
     def save_model(self, request, obj, form, change):
         if not obj.pk:
@@ -53,46 +59,21 @@ class ExpenseAdmin(admin.ModelAdmin):
         form.base_fields['add_by'].disabled = True
         return form
 
-    def changelist_view(self, request, extra_context=None):
-        """ ✅ Set default date range for Expense View """
-        if not request.GET.get('date__range__gte') and not request.GET.get('date__range__lte'):
-            today = now().date()
-            first_date = today.replace(day=27) if today.day >= 27 else (
-                today.replace(day=1) - timedelta(days=1)).replace(day=27)
-            last_date = (first_date + timedelta(days=31)).replace(day=26)
-
-            query_string = f"date__range__gte={first_date}&date__range__lte={last_date}"
-            return redirect(f"{request.path}?{query_string}")
-
-        return super().changelist_view(request, extra_context)
-
 
 class CategoryExpenseAdmin(admin.ModelAdmin):
     list_display = ('name', 'total_spent')
-    list_filter = (('expense__date', DateRangeFilter),)
 
     def total_spent(self, obj):
-        """ ✅ Sum of expenses per category for the selected date range """
-        request = getattr(self, 'request', None)
-        if not request:
-            return 0
+        """ ✅ Sum of expenses per category for the default date range """
+        today = now().date()
+        first_date = today.replace(day=27) if today.day >= 27 else (
+            today.replace(day=1) - timedelta(days=1)).replace(day=27)
+        last_date = (first_date + timedelta(days=31)).replace(day=26)
 
-        start_date = request.GET.get('expense__date__range__gte')
-        end_date = request.GET.get('expense__date__range__lte')
-
-        expenses = Expense.objects.filter(category=obj, add_by=request.user)
-
-        if start_date and end_date:
-            expenses = expenses.filter(
-                date__gte=start_date, date__lte=end_date)
-        else:
-            today = now().date()
-            first_date = today.replace(day=27) if today.day >= 27 else (
-                today.replace(day=1) - timedelta(days=1)).replace(day=27)
-            last_date = (first_date + timedelta(days=31)).replace(day=26)
-            expenses = expenses.filter(
-                date__gte=first_date, date__lte=last_date)
-
+        expenses = Expense.objects.filter(
+            category=obj, add_by=self.request.user,
+            date__gte=first_date, date__lte=last_date
+        )
         total = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
         return float(total)  # ✅ Convert Decimal to float
 
@@ -104,23 +85,21 @@ class CategoryExpenseAdmin(admin.ModelAdmin):
         return qs.filter(user=request.user)
 
     def changelist_view(self, request, extra_context=None):
-        """ ✅ Set default date range for Category View & Show Total Spending with Pie Chart """
-        if not request.GET.get('expense__date__range__gte') and not request.GET.get('expense__date__range__lte'):
-            today = now().date()
-            first_date = today.replace(day=27) if today.day >= 27 else (
-                today.replace(day=1) - timedelta(days=1)).replace(day=27)
-            last_date = (first_date + timedelta(days=31)).replace(day=26)
-
-            query_string = f"expense__date__range__gte={first_date}&expense__date__range__lte={last_date}"
-            return redirect(f"{request.path}?{query_string}")
+        """ ✅ Show Total Spending with Pie Chart """
+        today = now().date()
+        first_date = today.replace(day=27) if today.day >= 27 else (
+            today.replace(day=1) - timedelta(days=1)).replace(day=27)
+        last_date = (first_date + timedelta(days=31)).replace(day=26)
 
         # ✅ Get total spending across all categories
         total_spending = Expense.objects.filter(
-            add_by=request.user).aggregate(Sum('amount'))['amount__sum'] or 0
+            add_by=request.user, date__gte=first_date, date__lte=last_date
+        ).aggregate(Sum('amount'))['amount__sum'] or 0
 
         # ✅ Get category-wise spending
-        category_totals = Expense.objects.filter(add_by=request.user).values(
-            'category__name').annotate(total=Sum('amount'))
+        category_totals = Expense.objects.filter(
+            add_by=request.user, date__gte=first_date, date__lte=last_date
+        ).values('category__name').annotate(total=Sum('amount'))
 
         category_labels = [c['category__name'] for c in category_totals]
         # ✅ Convert Decimal to float
