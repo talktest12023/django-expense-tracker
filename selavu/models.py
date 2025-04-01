@@ -40,7 +40,7 @@ class Income(models.Model):
     description = models.TextField(
         blank=True, null=True)  # Allows detailed notes
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     add_by = models.ForeignKey(
         User, on_delete=models.CASCADE)  # Links to User model
 
