@@ -25,3 +25,24 @@ class Expense(models.Model):
 
     def __str__(self):
         return f"{self.category.name} - {self.amount} - {self.date}"
+
+
+class Income(models.Model):
+    INCOME_SOURCES = [
+        ('Salary', 'Salary'),
+        ('equity', 'equity'),
+        ('Allowance', 'Allowance'),
+        ('Other', 'Other'),
+    ]
+
+    source = models.CharField(
+        max_length=50, choices=INCOME_SOURCES, default='Salary')
+    description = models.TextField(
+        blank=True, null=True)  # Allows detailed notes
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(auto_now_add=True)
+    add_by = models.ForeignKey(
+        User, on_delete=models.CASCADE)  # Links to User model
+
+    def __str__(self):
+        return f"{self.source} - {self.amount}"

@@ -1,0 +1,13 @@
+{% extends 'admin/change_list.html' %}
+
+{% block content %}
+  
+    <div style="margin-bottom: 20px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd;">
+        <h3>Total Income: {{ total_income }}</h3>
+        <h3>Total Expense: {{ total_expense }}</h3>
+        <h3>Balance: {{ balance }}</h3>
+    </div>
+    {% block result_list %}
+        {{ block.super }}
+    {% endblock %}
+{% endblock %}

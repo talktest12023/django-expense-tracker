@@ -1,0 +1,22 @@
+<!-- templates/admin/finance_summary.html -->
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>Finance Summary</h1>
+  <table>
+    <tr>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Total Income</th>
+      <th>Total Expense</th>
+      <th>Balance</th>
+    </tr>
+    <tr>
+      <td>{{ start_date }}</td>
+      <td>{{ end_date }}</td>
+      <td>${{ total_income }}</td>
+      <td>${{ total_expense }}</td>
+      <td>${{ balance }}</td>
+    </tr>
+  </table>
+{% endblock %}

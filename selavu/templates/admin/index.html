@@ -1,0 +1,14 @@
+{% extends "admin/index.html" %}
+
+{% block sidebar %}
+    {{ block.super }}  <!-- Keep existing sidebar content -->
+    <div class="module">
+        <h2>Finance Summary</h2>
+        <ul>
+            <li><strong>Period:</strong> {{ start_date }} - {{ end_date }}</li>
+            <li><strong>Total Income:</strong> ₹{{ total_income }}</li>
+            <li><strong>Total Expense:</strong> ₹{{ total_expense }}</li>
+            <li><strong>Balance:</strong> ₹{{ balance }}</li>
+        </ul>
+    </div>
+{% endblock %}
