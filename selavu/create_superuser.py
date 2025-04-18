@@ -4,7 +4,7 @@ User = get_user_model()
 
 username = "rahuladmin2"
 email = "talktest12023@gmail.com"
-password = "tarento123"
+password = ""
 
 if not User.objects.filter(username=username).exists():
     User.objects.create_superuser(
